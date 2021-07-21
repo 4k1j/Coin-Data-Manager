@@ -1,3 +1,6 @@
 api_key.txt
 .idea
 .csv
+data/
+db
+__pycache__
