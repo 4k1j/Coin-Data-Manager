@@ -3,4 +3,4 @@ api_key.txt
 .csv
 data/
 db
-__pycache__
+__pycache__/
