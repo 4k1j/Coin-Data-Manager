@@ -18,7 +18,7 @@ class UpbitQuotationApiCaller(ApiCaller):
         query = {"isDetails": "true"}
         return self.request(url, query)
 
-    def get_candle(self, market, count, unit="minutes/1"):
+    def get_candle(self, market, count, unit="minutes/1", to=None):
         if count > 200:
             raise Exception(f"Count can't exceed 200 : {200}")
 
@@ -26,5 +26,3 @@ class UpbitQuotationApiCaller(ApiCaller):
         query = {"market": market, "count": count}
         return self.request(url, query)
 
-uqa = UpbitQuotationApiCaller()
-print(uqa.get_candle("KRW-BTC", 200))
