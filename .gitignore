@@ -1,2 +1,7 @@
-api_key.txt
+coin_data_manager/api/api_key.yaml
 .idea
+.csv
+data/
+db
+__pycache__/
+*.egg-info
