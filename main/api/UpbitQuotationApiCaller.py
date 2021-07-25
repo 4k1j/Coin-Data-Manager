@@ -13,16 +13,20 @@ class UpbitQuotationApiCaller(ApiCaller):
 
         return requests.request(method, url, params=params, headers=headers).json()
 
-    def get_market_code(self):
+    def get_market_codes(self):
         url = "/market/all"
         query = {"isDetails": "true"}
         return self.request(url, query)
 
-    def get_candle(self, market, count, unit="minutes/1", to=None):
+    def get_candles(self, market, count, unit="minutes/1", to=None):
         """
         :param market: Market code ex) KRW-BTC
         :param count: Quantity you want to receive
-        :param unit: Unit of minutes ex) 1, 3, 5, 10, 15, 30, 60, 240
+        :param unit: Candle unit
+                ex) - minutes /1, /3, /5, /10, /15, /30, /60, /240
+                    - days
+                    - weeks
+                    - months
         :param to: Last candle time like yyyy-MM-dd'T'HH:mm:ss'Z' or yyyy-MM-dd HH:mm:ss
         :return: candles json data
         """
@@ -42,3 +46,4 @@ class UpbitQuotationApiCaller(ApiCaller):
         query_string = {"markets": markets}
 
         return self.request(url=url, params=query_string)
+
