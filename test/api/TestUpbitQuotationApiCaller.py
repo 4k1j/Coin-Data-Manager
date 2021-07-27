@@ -1,8 +1,4 @@
 import unittest
-import time
-from datetime import datetime
-
-import pandas as pd
 
 from main.api.UpbitQuotationApiCaller import UpbitQuotationApiCaller
 
@@ -12,7 +8,7 @@ class TestUpbitQuotationApiCaller(unittest.TestCase):
         self.api_caller = UpbitQuotationApiCaller()
 
     def test_get_minutes_candle(self):
-        candles = self.api_caller.get_candles("KRW-BTC", 1)
+        candles = self.api_caller.get_candles("KRW-BTC", 1, "minutes/1")
         candle = candles[0]
 
         response_list = [
@@ -26,14 +22,19 @@ class TestUpbitQuotationApiCaller(unittest.TestCase):
             "timestamp",
             "candle_acc_trade_price",
             "candle_acc_trade_volume",
-            "unit"
+            "unit",
         ]
 
         for response_key in response_list:
-            self.assertTrue(response_key in candle, f"{response_key} is not in candle: {candle}")
+            self.assertTrue(
+                response_key in candle, f"{response_key} is not in candle: {candle}"
+            )
 
         for response_key in candle:
-            self.assertTrue(response_key in response_list, f"{response_key} is not in response_list: {response_list}")
+            self.assertTrue(
+                response_key in response_list,
+                f"{response_key} is not in response_list: {response_list}",
+            )
 
     def test_get_days_candle(self):
         candles = self.api_caller.get_candles("KRW-BTC", 1, unit="days")
@@ -56,10 +57,15 @@ class TestUpbitQuotationApiCaller(unittest.TestCase):
         ]
 
         for response_key in response_list:
-            self.assertTrue(response_key in candle, f"{response_key} is not in candle: {candle}")
+            self.assertTrue(
+                response_key in candle, f"{response_key} is not in candle: {candle}"
+            )
 
         for response_key in candle:
-            self.assertTrue(response_key in response_list, f"{response_key} is not in response_list: {response_list}")
+            self.assertTrue(
+                response_key in response_list,
+                f"{response_key} is not in response_list: {response_list}",
+            )
 
     def test_get_weeks_candle(self):
         candles = self.api_caller.get_candles("KRW-BTC", 1, unit="weeks")
@@ -80,10 +86,15 @@ class TestUpbitQuotationApiCaller(unittest.TestCase):
         ]
 
         for response_key in response_list:
-            self.assertTrue(response_key in candle, f"{response_key} is not in candle: {candle}")
+            self.assertTrue(
+                response_key in candle, f"{response_key} is not in candle: {candle}"
+            )
 
         for response_key in candle:
-            self.assertTrue(response_key in response_list, f"{response_key} is not in response_list: {response_list}")
+            self.assertTrue(
+                response_key in response_list,
+                f"{response_key} is not in response_list: {response_list}",
+            )
 
     def test_get_months_candle(self):
         candles = self.api_caller.get_candles("KRW-BTC", 1, unit="months")
@@ -104,12 +115,16 @@ class TestUpbitQuotationApiCaller(unittest.TestCase):
         ]
 
         for response_key in response_list:
-            self.assertTrue(response_key in candle, f"{response_key} is not in candle: {candle}")
+            self.assertTrue(
+                response_key in candle, f"{response_key} is not in candle: {candle}"
+            )
 
         for response_key in candle:
-            self.assertTrue(response_key in response_list,
-                            f"{response_key} is not in response_list: {response_list}")
+            self.assertTrue(
+                response_key in response_list,
+                f"{response_key} is not in response_list: {response_list}",
+            )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
