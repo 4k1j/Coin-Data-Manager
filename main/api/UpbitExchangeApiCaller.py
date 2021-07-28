@@ -4,14 +4,12 @@ import hashlib
 from urllib.parse import urlencode
 import requests
 
-from main.api.ApiCaller import ApiCaller
 
-
-class UpbitExchangeApiCaller(ApiCaller):
+class UpbitExchangeApiCaller:
     def __init__(self, access_key, secret_key):
-        super().__init__()
         self.access_key = access_key
         self.secret_key = secret_key
+        self.server_url = "https://api.upbit.com/v1"
 
     @staticmethod
     def _get_query_hash(query):
@@ -32,12 +30,22 @@ class UpbitExchangeApiCaller(ApiCaller):
         jwt_token = jwt.encode(payload, self.secret_key)
         return f"Bearer {jwt_token}"
 
-    def request(self, url, params: dict, method="GET"):
-        authorization_token = self._get_authorization_token(params)
+    def request(self, request_url, params: dict = None, method="GET"):
+        authorization_token = self._get_authorization_token(query=params)
         headers = {"Authorization": authorization_token}
 
-        return requests.request(method, self.server_url + url, params=params, headers=headers).json()
+        request_args = {"headers": headers}
+
+        if params is not None:
+            request_args["params"] = params
+
+        return requests.request(
+            method, self.server_url + request_url, **request_args
+        ).json()
 
     def get_orders_chance(self, market):
         query = {"market": market}
-        return self.request("/v1/orders/chance", query)
+        return self.request("/orders/chance", query)
+
+    def get_accounts(self):
+        return self.request("/accounts")
