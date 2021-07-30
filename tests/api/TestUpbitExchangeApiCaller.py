@@ -3,7 +3,7 @@ from pathlib import Path
 
 import yaml
 
-from main.api.UpbitExchangeApiCaller import UpbitExchangeApiCaller
+from src.api.UpbitExchangeApiCaller import UpbitExchangeApiCaller
 
 
 class TestUpbitExchangeApiCaller(unittest.TestCase):

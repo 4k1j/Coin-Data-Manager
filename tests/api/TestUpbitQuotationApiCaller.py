@@ -1,11 +1,11 @@
 import unittest
 
-from main.api.UpbitQuotationApiCaller import UpbitQuotationApiCaller
-from main.candle.Candle import Candle
-from main.candle.upbit.UpbitDayCandle import UpbitDayCandle
-from main.candle.upbit.UpbitMinuteCandle import UpbitMinuteCandle
-from main.candle.upbit.UpbitMonthCandle import UpbitMonthCandle
-from main.candle.upbit.UpbitWeekCandle import UpbitWeekCandle
+from src.api.UpbitQuotationApiCaller import UpbitQuotationApiCaller
+from src.candle.Candle import Candle
+from src.candle.upbit.UpbitDayCandle import UpbitDayCandle
+from src.candle.upbit.UpbitMinuteCandle import UpbitMinuteCandle
+from src.candle.upbit.UpbitMonthCandle import UpbitMonthCandle
+from src.candle.upbit.UpbitWeekCandle import UpbitWeekCandle
 
 
 class TestUpbitQuotationApiCaller(unittest.TestCase):

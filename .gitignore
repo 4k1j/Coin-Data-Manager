@@ -1,4 +1,4 @@
-test/api/api_key.yaml
+tests/api/api_key.yaml
 .idea
 .csv
 data/
