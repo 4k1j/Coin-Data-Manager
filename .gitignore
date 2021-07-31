@@ -4,3 +4,4 @@ tests/api/api_key.yaml
 data/
 db
 __pycache__/
+*.egg-info

@@ -1,7 +1,7 @@
-from src.candle.Candle import Candle
+from coin.candle.Candle import Candle
 
 
-class UpbitMonthCandle(Candle):
+class UpbitDayCandle(Candle):
     def __init__(
             self,
             market,
@@ -14,7 +14,9 @@ class UpbitMonthCandle(Candle):
             timestamp,
             candle_acc_trade_price,
             candle_acc_trade_volume,
-            first_day_of_period
+            prev_closing_price,
+            change_price,
+            change_rate,
     ):
         super().__init__(
             market,
@@ -28,7 +30,9 @@ class UpbitMonthCandle(Candle):
         self.timestamp = timestamp
         self.candle_acc_trade_price = candle_acc_trade_price
         self.candle_acc_trade_volume = candle_acc_trade_volume
-        self.first_day_of_period = first_day_of_period
+        self.prev_closing_price = prev_closing_price
+        self.change_price = change_price
+        self.change_rate = change_rate
 
     @staticmethod
     def from_response(response: dict):
@@ -42,9 +46,11 @@ class UpbitMonthCandle(Candle):
         timestamp = response["timestamp"]
         candle_acc_trade_price = response["candle_acc_trade_price"]
         candle_acc_trade_volume = response["candle_acc_trade_volume"]
-        first_day_of_period = response["first_day_of_period"]
+        prev_closing_price = response["prev_closing_price"]
+        change_price = response["change_price"]
+        change_rate = response["change_rate"]
 
-        return UpbitMonthCandle(
+        return UpbitDayCandle(
             market,
             candle_date_time_utc,
             candle_date_time_kst,
@@ -55,5 +61,7 @@ class UpbitMonthCandle(Candle):
             timestamp,
             candle_acc_trade_price,
             candle_acc_trade_volume,
-            first_day_of_period
+            prev_closing_price,
+            change_price,
+            change_rate
         )

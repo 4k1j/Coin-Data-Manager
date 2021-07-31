@@ -2,11 +2,11 @@ from typing import List
 
 import requests
 
-from src.candle.Candle import Candle
-from src.candle.upbit.UpbitDayCandle import UpbitDayCandle
-from src.candle.upbit.UpbitMinuteCandle import UpbitMinuteCandle
-from src.candle.upbit.UpbitMonthCandle import UpbitMonthCandle
-from src.candle.upbit.UpbitWeekCandle import UpbitWeekCandle
+from coin.candle.Candle import Candle
+from coin.candle.upbit.UpbitDayCandle import UpbitDayCandle
+from coin.candle.upbit.UpbitMinuteCandle import UpbitMinuteCandle
+from coin.candle.upbit.UpbitMonthCandle import UpbitMonthCandle
+from coin.candle.upbit.UpbitWeekCandle import UpbitWeekCandle
 
 
 class UpbitQuotationApiCaller:

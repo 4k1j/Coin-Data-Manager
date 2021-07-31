@@ -1,23 +1,17 @@
 import unittest
-from pathlib import Path
-
 import yaml
-
-from src.api.UpbitExchangeApiCaller import UpbitExchangeApiCaller
+from pathlib import Path
+from coin.api.UpbitExchangeApiCaller import UpbitExchangeApiCaller
 
 
 class TestUpbitExchangeApiCaller(unittest.TestCase):
     def setUp(self):
-
         with Path("api_key.yaml").open() as api_key_file:
             api_key = yaml.load(api_key_file, Loader=yaml.FullLoader)
             access_key = api_key["access_key"]
             secret_key = api_key["secret_key"]
 
-            self.api_caller = UpbitExchangeApiCaller(
-                access_key,
-                secret_key
-            )
+            self.api_caller = UpbitExchangeApiCaller(access_key, secret_key)
 
     def test_get_accounts(self):
         accounts = self.api_caller.get_accounts()
