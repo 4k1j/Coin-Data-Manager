@@ -6,6 +6,8 @@ from coin.candle.upbit.UpbitDayCandle import UpbitDayCandle
 from coin.candle.upbit.UpbitMinuteCandle import UpbitMinuteCandle
 from coin.candle.upbit.UpbitMonthCandle import UpbitMonthCandle
 from coin.candle.upbit.UpbitWeekCandle import UpbitWeekCandle
+from coin.tick.Tick import Tick
+from coin.tick.Ticker import Ticker
 
 
 class TestUpbitQuotationApiCaller(unittest.TestCase):
@@ -50,6 +52,34 @@ class TestUpbitQuotationApiCaller(unittest.TestCase):
         self.assertTrue(isinstance(candle, UpbitMonthCandle))
 
         for _, value in candle.__dict__.items():
+            self.assertTrue(value is not None)
+
+    def test_get_ticks(self):
+        ticks = self.api_caller.get_ticks("KRW-BTC", 10)
+        tick = ticks[0]
+
+        self.assertTrue(len(ticks) == 10)
+        self.assertTrue(isinstance(tick, Tick))
+
+        for _, value in tick.__dict__.items():
+            self.assertTrue(value is not None)
+
+    def test_get_tickers(self):
+        markets = ["KRW-BTC", "BTC-ETH"]
+        tickers = self.api_caller.get_tickers(markets)
+
+        self.assertTrue(len(tickers) == len(markets))
+
+        krw_btc_ticker = tickers[0]
+        btc_eth_ticker = tickers[1]
+
+        self.assertTrue(isinstance(krw_btc_ticker, Ticker))
+        self.assertTrue(isinstance(btc_eth_ticker, Ticker))
+
+        for _, value in krw_btc_ticker.__dict__.items():
+            self.assertTrue(value is not None)
+
+        for _, value in btc_eth_ticker.__dict__.items():
             self.assertTrue(value is not None)
 
 

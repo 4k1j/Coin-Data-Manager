@@ -7,6 +7,9 @@ from coin.candle.upbit.UpbitDayCandle import UpbitDayCandle
 from coin.candle.upbit.UpbitMinuteCandle import UpbitMinuteCandle
 from coin.candle.upbit.UpbitMonthCandle import UpbitMonthCandle
 from coin.candle.upbit.UpbitWeekCandle import UpbitWeekCandle
+from coin.tick.Tick import Tick
+from coin.tick.Ticker import Ticker
+from coin.tick.UpbitTick import UpbitTick
 
 
 class UpbitQuotationApiCaller:
@@ -20,6 +23,16 @@ class UpbitQuotationApiCaller:
         return requests.request(method, url, params=params, headers=headers).json()
 
     def get_market_codes(self):
+        """
+        Get all market codes on Upbit
+        :return: market code list
+                market	업비트에서 제공중인 시장 정보
+                korean_name	거래 대상 암호화폐 한글명
+                english_name	거래 대상 암호화폐 영문명
+                market_warning	유의 종목 여부
+                                - NONE (해당 사항 없음)
+                                - CAUTION(투자유의)
+        """
         url = "/market/all"
         query = {"isDetails": "true"}
         return self.request(url, query)
@@ -48,11 +61,39 @@ class UpbitQuotationApiCaller:
         candle_type = self.get_candle_type(unit)
 
         response = self.request(url, query)
-        candles = [
-            candle_type.from_response(candle_info) for candle_info in response
-        ]
+        candles = [candle_type.from_response(candle_info) for candle_info in response]
 
         return candles
+
+    def get_ticks(self, market, count) -> List[Tick]:
+        """
+        Get ticks
+        :param market: market code
+        :param count: required amount
+        :return: Tick list
+        """
+        url = "/trades/ticks"
+        query = {"market": market, "count": count}
+
+        response = self.request(url, query)
+        ticks = [UpbitTick.from_response(market, tick) for tick in response]
+
+        return ticks
+
+    def get_tickers(self, markets) -> List[Ticker]:
+        """
+        Get tickers
+        :param markets: Target markets list
+        :return: Ticker list
+        """
+        url = "/ticker"
+        query_string = {"markets": ",".join(markets)}
+
+        response = self.request(url=url, params=query_string)
+
+        tickers = [Ticker.from_response(ticker) for ticker in response]
+
+        return tickers
 
     @staticmethod
     def get_candle_type(unit):
@@ -67,9 +108,3 @@ class UpbitQuotationApiCaller:
         else:
             raise TypeError(f"Can't use {unit}")
         return candle_type
-
-    def get_ticker(self, markets):
-        url = "/ticker"
-        query_string = {"markets": markets}
-
-        return self.request(url=url, params=query_string)
