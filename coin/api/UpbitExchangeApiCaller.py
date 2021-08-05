@@ -4,8 +4,10 @@ import hashlib
 from urllib.parse import urlencode
 import requests
 
+from coin.api.ExchangeApiCaller import ExchangeApiCaller
 
-class UpbitExchangeApiCaller:
+
+class UpbitExchangeApiCaller(ExchangeApiCaller):
     def __init__(self, access_key, secret_key):
         self.access_key = access_key
         self.secret_key = secret_key

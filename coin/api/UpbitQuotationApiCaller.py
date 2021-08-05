@@ -2,6 +2,7 @@ from typing import List
 
 import requests
 
+from coin.api.QuotationApiCaller import QuotationApiCaller
 from coin.candle.Candle import Candle
 from coin.candle.upbit.UpbitDayCandle import UpbitDayCandle
 from coin.candle.upbit.UpbitMinuteCandle import UpbitMinuteCandle
@@ -12,7 +13,7 @@ from coin.tick.Ticker import Ticker
 from coin.tick.UpbitTick import UpbitTick
 
 
-class UpbitQuotationApiCaller:
+class UpbitQuotationApiCaller(QuotationApiCaller):
     def __init__(self):
         self.server_url = "https://api.upbit.com/v1"
 
