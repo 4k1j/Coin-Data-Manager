@@ -1,16 +1,37 @@
+from abc import ABCMeta, abstractmethod
+from datetime import datetime
 from typing import List
 
 import requests
-
-from coin_data_manager.api.ApiCaller import ApiCaller
 from coin_data_manager.model.candle import Candle
+from coin_data_manager.util import CandleUnit
 
 
-class UpbitQuotationApiCaller(ApiCaller):
+class ApiCaller(metaclass=ABCMeta):
+
+    @abstractmethod
+    def get_candles(self, market: str, count: int, unit: CandleUnit):
+        pass
+
+    @abstractmethod
+    def get_ticker(self, markets):
+        pass
+
+
+class SimpleApiCaller(ApiCaller):
+
+    def get_ticker(self, markets):
+        pass
+
+    def get_candles(self, market: str, count: int, unit: CandleUnit):
+        return [Candle(market, unit, datetime.now(), 0, 0, 0, 0) for _ in range(count)]
+
+
+class UpbitApiCaller(ApiCaller):
     def __init__(self):
         self.server_url = "https://api.upbit.com/v1"
 
-    def request(self, url: str, params: dict, method="GET"):
+    def _request(self, url: str, params: dict, method="GET"):
         url = self.server_url + url
         headers = {"Accept": "application/json"}
 
@@ -19,13 +40,12 @@ class UpbitQuotationApiCaller(ApiCaller):
     def get_market_codes(self):
         url = "/market/all"
         query = {"isDetails": "true"}
-        return self.request(url, query)
+        return self._request(url, query)
 
-    # TODO unit to enum
-    def get_candles(self, market: str, count: int, unit: str, to=None) -> List[Candle]:
+    def get_candles(self, market: str, count: int, unit: CandleUnit, to=None) -> List[Candle]:
         """
         :param market: Market code ex) KRW-BTC
-        :param count: Quantity you want to receive
+        :param count: Quantity you want to receive 1 ~ 200
         :param unit: Candle unit
                 ex) - minutes /1, /3, /5, /10, /15, /30, /60, /240
                     - days
@@ -37,13 +57,13 @@ class UpbitQuotationApiCaller(ApiCaller):
         if count > 200:
             raise Exception(f"Count can't exceed 200 : {200}")
 
-        url = "/candles/" + unit
+        url = "/candles/" + unit.value
         query = {"market": market, "count": count}
 
         if to is not None:
             query["to"] = to
 
-        response = self.request(url, query)
+        response = self._request(url, query)
         candles = [
             Candle.from_response(candle_info, unit) for candle_info in response
         ]
@@ -54,4 +74,4 @@ class UpbitQuotationApiCaller(ApiCaller):
         url = "/ticker"
         query_string = {"markets": markets}
 
-        return self.request(url=url, params=query_string)
+        return self._request(url=url, params=query_string)

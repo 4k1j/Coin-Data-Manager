@@ -1,4 +1,5 @@
-# Coin Trading Bot
+# CDM
+### Coin Data Manager
 
 
 # API
