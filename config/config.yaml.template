@@ -1,3 +1,11 @@
 api_key:
   access_key: "YOUR_API_ACCESS_KEY"
   secret_key: "YOUR_API_SECRET_KEY"
+
+repository:
+  host: ""
+  database: ""
+  user: ""
+  password: ""
+  port:
+  schema: ""

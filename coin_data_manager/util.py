@@ -13,3 +13,7 @@ class CandleUnit(Enum):
     DAY = "days"
     WEEK = "weeks"
     MONTH = "months"
+
+
+if __name__ == '__main__':
+    print(f"{CandleUnit.MIN_1.value}")

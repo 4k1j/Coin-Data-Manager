@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List
 
 import requests
-from coin_data_manager.model.candle import Candle
+from coin_data_manager.models.candle import Candle
 from coin_data_manager.util import CandleUnit
 
 
