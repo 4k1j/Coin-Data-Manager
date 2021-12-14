@@ -1,3 +1,4 @@
+import os
 import time
 from datetime import datetime, timedelta
 
@@ -6,7 +7,10 @@ from coin_data_manager.repositories.candle import CandleRepository, AlreadyExist
 from coin_data_manager.util import CandleUnit
 from config.config import CONFIG
 
+
 if __name__ == '__main__':
+    market = os.environ["MARKET"]
+    print("market", market)
     api_caller = UpbitApiCaller()
 
     database_config = CONFIG["database"]
@@ -22,7 +26,7 @@ if __name__ == '__main__':
 
     candles = [" "]
     while len(candles) > 0:
-        candles = api_caller.get_candles("KRW-BTC", 200, CandleUnit.MIN_1, last_candle_time.strftime("%Y-%m-%d %H:%M:00"))
+        candles = api_caller.get_candles(market, 200, CandleUnit.MIN_1, last_candle_time.strftime("%Y-%m-%d %H:%M:00"))
 
         for candle in candles:
             print(candle.datetime)

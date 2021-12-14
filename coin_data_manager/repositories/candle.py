@@ -26,7 +26,7 @@ class CandleRepository(AbstractRepository):
             cursor = self.connection.cursor()
 
             query = f"""
-                INSERT INTO candle (market, unit, datetime, open_price, high_price, low_price, last_price, create_datetime, update_datetime) 
+                INSERT INTO candle (market, unit, datetime, open_price, high_price, low_price, close_price, acc_trade_price, acc_trade_volume, create_datetime, update_datetime) 
                 VALUES (
                     '{candle.market}',
                     '{candle.unit.value}',
@@ -34,7 +34,9 @@ class CandleRepository(AbstractRepository):
                     {candle.open_price},
                     {candle.high_price},
                     {candle.low_price},
-                    {candle.last_price},
+                    {candle.close_price},
+                    {candle.acc_trade_price},
+                    {candle.acc_trade_volume},
                     current_timestamp,
                     current_timestamp
                 )
