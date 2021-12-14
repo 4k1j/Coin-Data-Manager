@@ -3,13 +3,19 @@
 FROM python:3.8-slim-buster
 
 
-COPY . .
+RUN apt-get update
+RUN mkdir ./coin-data-manager
+
+COPY . ./coin-data-manager
+
+
+WORKDIR coin-data-manager
+COPY ./scripts .
+
 
 RUN pip3 install --upgrade pip
 
 RUN pip3 install -r requirements.txt
 
-RUN python3 coin/setup.py develop
 
-
-CMD ["python3", "tests/api/TestUpbitQuotationApiCaller.py"]
+CMD ["python3", "extract_upbit_candles.py"]

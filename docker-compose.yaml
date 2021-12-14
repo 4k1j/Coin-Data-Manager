@@ -1,0 +1,16 @@
+version: "3"
+services:
+    btc-etl:
+        build:
+            context: .
+        container_name: btc_candle_etl
+        environment:
+            MARKET: "KRW-BTC"
+
+    eth-etl:
+        build:
+            context: .
+        container_name: eth_candle_etl
+        environment:
+            MARKET: "KRW-ETH"
+
