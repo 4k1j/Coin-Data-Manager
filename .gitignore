@@ -1,7 +1,7 @@
 .idea
 .csv
-data/
-db
 __pycache__/
 *.egg-info
 config/config.yaml
+*.pem
+db/data
