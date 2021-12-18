@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from coin_data_manager.api.api_caller import UpbitApiCaller
 from coin_data_manager.repositories.candle import CandleRepository, AlreadyExistError
-from coin_data_manager.util import CandleUnit
+from coin_data_manager.util import CandleUnit, TooManyRequestsError
 from config.config import CONFIG
 
 
@@ -26,15 +26,22 @@ if __name__ == '__main__':
 
     candles = [" "]
     while len(candles) > 0:
-        candles = api_caller.get_candles(market, 200, CandleUnit.MIN_1, last_candle_time.strftime("%Y-%m-%d %H:%M:00"))
 
-        for candle in candles:
-            print(candle.datetime)
-            try:
-                candle_repository.add(candle)
-            except AlreadyExistError as e:
-                print("Already")
+        try:
+            candles = api_caller.get_candles(market, 200, CandleUnit.MIN_1, last_candle_time.strftime("%Y-%m-%d %H:%M:00"))
 
-        last_candle_time = last_candle_time - timedelta(minutes=200)
+            for candle in candles:
+                print(candle.datetime)
+                try:
+                    candle_repository.add(candle)
+                except AlreadyExistError as e:
+                    print("Already")
+
+            last_candle_time = last_candle_time - timedelta(minutes=200)
+
+        except TooManyRequestsError as e:
+            print(e)
+
         time.sleep(0.05)
 
+    print("Extract done")

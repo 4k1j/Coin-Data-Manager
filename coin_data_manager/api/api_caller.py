@@ -1,10 +1,11 @@
+import time
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from typing import List
 
 import requests
 from coin_data_manager.models.candle import Candle
-from coin_data_manager.util import CandleUnit
+from coin_data_manager.util import CandleUnit, TooManyRequestsError
 
 
 class ApiCaller(metaclass=ABCMeta):
@@ -35,7 +36,12 @@ class UpbitApiCaller(ApiCaller):
         url = self.server_url + url
         headers = {"Accept": "application/json"}
 
-        return requests.request(method, url, params=params, headers=headers).json()
+        response = requests.request(method, url, params=params, headers=headers)
+
+        if response.status_code == 429 and "Too many API requests" in response.text:
+            raise TooManyRequestsError(f"Too many requests with {url}, {params}")
+
+        return response.json()
 
     def get_market_codes(self):
         url = "/market/all"
