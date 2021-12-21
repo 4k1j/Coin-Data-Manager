@@ -3,6 +3,7 @@ services:
     btc-etl:
         build:
             context: .
+            dockerfile: ./extract_upbit_candles.Dockerfile
         container_name: btc_candle_etl
         environment:
             MARKET: "KRW-BTC"
@@ -10,6 +11,7 @@ services:
     eth-etl:
         build:
             context: .
+            dockerfile: ./extract_upbit_candles.Dockerfile
         container_name: eth_candle_etl
         environment:
             MARKET: "KRW-ETH"

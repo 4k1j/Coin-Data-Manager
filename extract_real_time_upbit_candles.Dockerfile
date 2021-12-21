@@ -1,4 +1,4 @@
-# Dockerfile for test
+# extract_upbit_candles.Dockerfile for test
 
 FROM python:3.8-slim-buster
 
@@ -18,4 +18,4 @@ RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 
 
-CMD ["python3", "extract_upbit_candles.py"]
+CMD ["python3", "extract_real_time_upbit_candle.py"]
