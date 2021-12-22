@@ -80,3 +80,6 @@ class UpbitApiCaller(ApiCaller):
         query_string = {"markets": markets}
 
         return self._request(url=url, params=query_string)
+
+    def get_price(self, market):
+        return self.get_ticker(market)[0]["trade_price"]
