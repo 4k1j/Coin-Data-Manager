@@ -29,7 +29,7 @@ class CandleRepository(AbstractRepository):
                 INSERT INTO candle (market, unit, datetime, open_price, high_price, low_price, close_price, acc_trade_price, acc_trade_volume, create_datetime, update_datetime) 
                 VALUES (
                     '{candle.market}',
-                    '{candle.unit.value}',
+                    '{candle.unit}',
                     '{candle.datetime}',
                     {candle.open_price},
                     {candle.high_price},
