@@ -9,6 +9,8 @@ from config.config import CONFIG
 if __name__ == "__main__":
     market = os.environ["MARKET"]
     env = os.environ["ENV"]
+    topic = f"coin-bot.coin-data-manager.{env}.{market}"
+    print(f"Producer init : {topic}")
 
     database_config = CONFIG["database"]
     kafka_config = CONFIG["kafka"]
@@ -21,7 +23,7 @@ if __name__ == "__main__":
 
     candle_repository = CandleRepository(database, host, port, user, password)
     consumer = KafkaConsumer(
-        f"coin-bot.coin-data-manager.{env}.{market}",
+        topic,
         bootstrap_servers=[f"{kafka_config['broker']['host']}:9092"],
         auto_offset_reset="earliest",  # latest, earliest
         # enable_auto_commit=True,

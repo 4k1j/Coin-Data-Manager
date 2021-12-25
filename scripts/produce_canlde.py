@@ -12,6 +12,8 @@ if __name__ == '__main__':
     market = os.environ["MARKET"]
     env = os.environ["ENV"]
     kafka_config = CONFIG["kafka"]
+    topic = f"coin-bot.coin-data-manager.{env}.{market}"
+    print(f"Producer init : {topic}")
 
     producer = KafkaProducer(
         acks=0,
@@ -33,10 +35,10 @@ if __name__ == '__main__':
 
             candle = candles[0]
             print(candle.__dict__)
-            producer.send(f"coin-bot.coin-data-manager.{env}.{market}", value=candle.__dict__)
+            producer.send(topic, value=candle.__dict__)
             producer.flush()
 
-            time.sleep(60)
+            time.sleep(40)
         except TooManyRequestsError as e:
             print(e)
             time.sleep(1)
