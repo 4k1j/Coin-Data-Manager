@@ -37,18 +37,20 @@ if __name__ == "__main__":
     for message in consumer:
         print(f"Offset : {message.offset}")
 
-        value = json.load(message.value)
+        value = message.value
+        if type(value) == str:
+            value = json.load(message.value)
 
         candle = Candle(
-            market=message.value["market"],
-            unit=message.value["unit"],
-            _datetime=message.value["datetime"],
-            open_price=message.value["open_price"],
-            high_price=message.value["high_price"],
-            low_price=message.value["low_price"],
-            close_price=message.value["close_price"],
-            acc_trade_price=message.value["acc_trade_price"],
-            acc_trade_volume=message.value["acc_trade_volume"],
+            market=value["market"],
+            unit=value["unit"],
+            _datetime=value["datetime"],
+            open_price=value["open_price"],
+            high_price=value["high_price"],
+            low_price=value["low_price"],
+            close_price=value["close_price"],
+            acc_trade_price=value["acc_trade_price"],
+            acc_trade_volume=value["acc_trade_volume"],
         )
 
         print(candle)
