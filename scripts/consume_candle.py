@@ -1,3 +1,5 @@
+import json
+
 from kafka import KafkaConsumer
 from json import loads  # topic, broker list
 import os
@@ -34,6 +36,8 @@ if __name__ == "__main__":
 
     for message in consumer:
         print(f"Offset : {message.offset}")
+
+        value = json.load(message.value)
 
         candle = Candle(
             market=message.value["market"],

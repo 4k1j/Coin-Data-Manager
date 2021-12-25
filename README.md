@@ -9,6 +9,10 @@ https://docs.upbit.com/docs/create-authorization-request
 
 # Producer
 ```shell
-docker build -t produce_candle -f produce_candle.Dockerfile .
-docker run 
+docker build --tag consume_candle -f consume_candle.Dockerfile .
+docker build --tag produce_candle -f produce_candle.Dockerfile .
+
+
+docker run -d --name btc_producer -e MARKET=KRW-BTC -e ENV=prod --net host produce_candle:latest
+docker run -d --name btc_consumer -e MARKET=KRW-BTC -e ENV=prod --net host consume_candle:latest
 ```
