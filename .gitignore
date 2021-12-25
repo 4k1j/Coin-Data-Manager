@@ -5,3 +5,4 @@ __pycache__/
 config/config.yaml
 *.pem
 db/data
+kafka/data

@@ -14,8 +14,7 @@ COPY ./scripts .
 
 
 RUN pip3 install --upgrade pip
-
 RUN pip3 install -r requirements.txt
 
 
-CMD ["python3", "extract_real_time_upbit_candle.py"]
+CMD ["python3", "produce_canlde.py"]

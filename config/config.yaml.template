@@ -8,3 +8,7 @@ database:
   user: "coinbot"
   password: "PASSWORD"
   port: 5432
+
+kafka:
+  broker:
+    host: "INSTANCE_PRIVATE_IP"
