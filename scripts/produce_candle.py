@@ -35,10 +35,11 @@ if __name__ == '__main__':
 
             candle = candles[0]
             print(candle.__dict__)
-            producer.send(topic, value=candle.__dict__)
+            response = producer.send(topic, value=candle.__dict__)
+            print("response : ", response.get(3))
             producer.flush()
 
-            time.sleep(40)
+            time.sleep(10)
         except TooManyRequestsError as e:
             print(e)
             time.sleep(1)

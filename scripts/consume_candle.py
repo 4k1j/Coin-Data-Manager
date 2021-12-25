@@ -10,7 +10,7 @@ if __name__ == "__main__":
     market = os.environ["MARKET"]
     env = os.environ["ENV"]
     topic = f"coin-bot.coin-data-manager.{env}.{market}"
-    print(f"Producer init : {topic}")
+    print(f"Consumer init : {topic}")
 
     database_config = CONFIG["database"]
     kafka_config = CONFIG["kafka"]
