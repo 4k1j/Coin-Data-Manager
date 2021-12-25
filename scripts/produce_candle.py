@@ -39,7 +39,7 @@ if __name__ == '__main__':
             print("response : ", response.get(3))
             producer.flush()
 
-            time.sleep(10)
+            time.sleep(50)
         except TooManyRequestsError as e:
             print(e)
             time.sleep(1)
