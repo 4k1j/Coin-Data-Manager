@@ -26,10 +26,20 @@ class CandleProducer:
 
         self.api_caller = UpbitApiCaller()
 
-    def produce(self):
+    def heartbeat(self):
+        self.model.heartbeat = datetime.utcnow()
+        self.producer_repository.update(self.model)
 
+    def get_order(self):
+        return self.producer_repository.get(self.model).order
+
+    def produce(self):
         count = 0
         while True:
+            order = self.get_order()
+            if order == "SHUTDOWN":
+                break
+
             try:
                 candles = self.api_caller.get_candles(
                     f"{self.market}",
@@ -51,5 +61,4 @@ class CandleProducer:
                 time.sleep(1)
 
             if count > 10:
-                self.model.heartbeat = datetime.utcnow()
-                self.producer_repository.update(self.model)
+                self.heartbeat()
