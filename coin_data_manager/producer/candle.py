@@ -15,7 +15,7 @@ class CandleProducer:
         self.unit = unit
         self.env = env
         self.topic = f"coin-bot.coin-data-manager.{env}.{market}"
-        self.model = Producer(market, unit, datetime.utcnow())
+        self.model = Producer(market, unit.value, datetime.utcnow())
         self.producer = KafkaProducer(
             acks=0,
             compression_type="gzip",
