@@ -77,7 +77,7 @@ class ProducerRepository(AbstractRepository):
         SET market = '{producer.market}',
             unit = '{producer.unit}',
             heartbeat = '{producer.heartbeat}',
-            order = '{producer.order}'
+            "order" = '{producer.order}'
         
         WHERE market = '{producer.market}' AND unit = '{producer.unit}'
         """.replace("'None'", "NULL")
