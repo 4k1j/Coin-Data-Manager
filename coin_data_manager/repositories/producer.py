@@ -21,7 +21,7 @@ class ProducerRepository(AbstractRepository):
         cursor = self.connection.cursor()
 
         query = f"""
-        SELECT market, unit, heartbeat, order
+        SELECT market, unit, heartbeat, "order"
         FROM producer
         WHERE market = '{producer.market}' and unit = '{producer.unit}'
         """
@@ -37,8 +37,18 @@ class ProducerRepository(AbstractRepository):
             market, unit, heartbeat, order
         )
 
-    def get_all(self) -> List:
-        pass
+    def get_all(self) -> List[Producer]:
+        cursor = self.connection.cursor()
+
+        query = f"""
+        SELECT market, unit, heartbeat, order
+        FROM producer
+        """
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        return [Producer(market, unit, heartbeat, order) for market, unit, heartbeat, order in results]
+
 
     def update(self, producer: Producer):
         cursor = self.connection.cursor()
