@@ -29,9 +29,11 @@ class ProducerRepository(AbstractRepository):
 
         try:
             cursor.execute(query)
+            self.connection.commit()
         except Exception as e:
             print(f"Error query : {query}")
             raise e
+
 
     def get(self, producer) -> Producer:
         cursor = self.connection.cursor()
