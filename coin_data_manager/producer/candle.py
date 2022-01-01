@@ -15,7 +15,7 @@ class CandleProducer:
         self.unit = unit
         self.env = env
         self.topic = f"coin-bot.coin-data-manager.{env}.{market}"
-        self.model = Producer(market, unit)
+        self.model = Producer(market, unit, datetime.utcnow())
         self.producer = KafkaProducer(
             acks=0,
             compression_type="gzip",
@@ -35,11 +35,14 @@ class CandleProducer:
 
     def produce(self):
         print(f"""
+            Producer init
             Market : {self.market}
             Unit : {self.unit}
             Environment : {self.env}
             Topic : {self.topic}
         """)
+
+        self.producer_repository.add(self.model)
 
         count = 0
         while True:

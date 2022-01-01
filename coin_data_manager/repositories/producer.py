@@ -14,8 +14,20 @@ class ProducerRepository(AbstractRepository):
             database=database, host=host, port=port, user=user, password=password,
         )
 
-    def add(self, model):
-        pass
+    def add(self, producer):
+        cursor = self.connection.cursor()
+
+        query = f"""
+        INSERT INTO producer (market, unit, heartbeat, "order")
+        VALUES (
+            '{producer.market}',
+            '{producer.unit}',
+            '{producer.heartbeat}',
+            '{producer.order}'
+        )
+        """.replace("'None'", "NULL")
+
+        cursor.execute(query)
 
     def get(self, producer) -> Producer:
         cursor = self.connection.cursor()
@@ -44,6 +56,7 @@ class ProducerRepository(AbstractRepository):
         SELECT market, unit, heartbeat, order
         FROM producer
         """
+
         cursor.execute(query)
         results = cursor.fetchall()
 
