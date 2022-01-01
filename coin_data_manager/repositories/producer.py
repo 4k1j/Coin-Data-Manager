@@ -27,7 +27,11 @@ class ProducerRepository(AbstractRepository):
         )
         """.replace("'None'", "NULL")
 
-        cursor.execute(query)
+        try:
+            cursor.execute(query)
+        except Exception as e:
+            print(f"Error query : {query}")
+            raise e
 
     def get(self, producer) -> Producer:
         cursor = self.connection.cursor()
