@@ -14,7 +14,7 @@ class ProducerRepository(AbstractRepository):
             database=database, host=host, port=port, user=user, password=password,
         )
 
-    def add(self, producer):
+    def add(self, producer: Producer):
         cursor = self.connection.cursor()
 
         query = f"""
