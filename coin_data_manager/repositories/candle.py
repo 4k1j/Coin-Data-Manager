@@ -62,3 +62,28 @@ class CandleRepository(AbstractRepository):
 
     def upsert(self, candle: Candle):
         pass
+
+    def get_date_count(self, market):
+        cursor = self.connection.cursor()
+
+        query = f"""
+            WITH candle_date AS (
+                SELECT distinct GENERATE_SERIES(candle_date.start_date, candle_date.end_date, '1 day')::date as date
+                FROM (
+                         SELECT min(datetime) as start_date, max(datetime) as end_date FROM candle WHERE market = '{market}'
+                     ) as candle_date
+            ), btc_candle AS(
+                SELECT * FROM candle WHERE market = '{market}'
+            )
+
+            SELECT cd.date, count(cd.date)
+            FROM candle_date as cd
+            LEFT JOIN btc_candle as bc
+            ON cd.date = bc.datetime::date
+            GROUP BY 1
+            ORDER BY 2
+        """
+
+        cursor.execute(query)
+        results = cursor.fetchall()
+        return results

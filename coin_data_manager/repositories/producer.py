@@ -59,7 +59,7 @@ class ProducerRepository(AbstractRepository):
         cursor = self.connection.cursor()
 
         query = f"""
-        SELECT market, unit, heartbeat, order
+        SELECT market, unit, heartbeat, "order"
         FROM producer
         """
 
