@@ -124,7 +124,7 @@ class BackfillCandleProducer(CandleProducer):
             if count == 1440:
                 continue
 
-            start_datetime = datetime.strptime(candle_date, "%y-%m-%d") + timedelta(minutes=200)
+            start_datetime = datetime.strptime(f"{candle_date}", "%y-%m-%d") + timedelta(minutes=200)
             for _ in range(8):
                 try:
                     candles = self.api_caller.get_candles(
