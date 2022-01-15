@@ -19,6 +19,6 @@ docker run -d --name btc_consumer -e MARKET=KRW-BTC -e ENV=prod --net host consu
 
 # Backend
 ```shell
-docker build --tag producer_manager_backend -f backend.Dockerfile .
-docker run -p 8000:8000 -d --name producer_manager_backend producer_manager_backend:latest
+docker build --tag data_manager_web -f data_manager_web.Dockerfile .
+docker run -p 8000:8000 -d --name data_manager_web data_manager_web:latest
 ```

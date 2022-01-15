@@ -81,7 +81,7 @@ class CandleRepository(AbstractRepository):
             LEFT JOIN btc_candle as bc
             ON cd.date = bc.datetime::date
             GROUP BY 1
-            ORDER BY 2
+            ORDER BY 1 desc
         """
 
         cursor.execute(query)

@@ -7,7 +7,7 @@ RUN mkdir ./coin-data-manager
 COPY . ./coin-data-manager
 
 WORKDIR coin-data-manager
-COPY ./backend .
+COPY web .
 
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
