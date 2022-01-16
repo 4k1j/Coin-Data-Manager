@@ -2,22 +2,16 @@ from typing import List
 import psycopg2 as pg
 
 from coin_data_manager.models.candle import Candle
-from coin_data_manager.repositories.repository import AbstractRepository
-
-
-class AlreadyExistError(Exception):
-    pass
+from coin_data_manager.repositories.repository import (
+    AbstractRepository,
+    AlreadyExistError,
+)
 
 
 class CandleRepository(AbstractRepository):
-
     def __init__(self, database, host, port, user, password):
         self.connection = pg.connect(
-            database=database,
-            host=host,
-            port=port,
-            user=user,
-            password=password,
+            database=database, host=host, port=port, user=user, password=password,
         )
 
     def add(self, candle: Candle):
@@ -47,7 +41,9 @@ class CandleRepository(AbstractRepository):
         except Exception as e:
             self.connection.rollback()
             if "already exists" in f"{e}":
-                raise AlreadyExistError(f"{candle.market} {candle.unit} {candle.datetime} already exists")
+                raise AlreadyExistError(
+                    f"{candle.market} {candle.unit} {candle.datetime} already exists"
+                )
             else:
                 raise Exception(e)
 

@@ -1,4 +1,5 @@
 from coin_data_manager.models.producer import Producer
+from coin_data_manager.repositories.candle import AlreadyExistError
 from coin_data_manager.repositories.repository import AbstractRepository
 from typing import List
 import psycopg2 as pg
@@ -21,19 +22,25 @@ class ProducerRepository(AbstractRepository):
         INSERT INTO producer (market, unit, heartbeat, "order")
         VALUES (
             '{producer.market}',
-            '{producer.unit}',
+            '{producer.unit.value}',
             '{producer.heartbeat}',
             '{producer.order}'
         )
-        """.replace("'None'", "NULL")
+        """.replace(
+            "'None'", "NULL"
+        )
 
         try:
             cursor.execute(query)
             self.connection.commit()
         except Exception as e:
+            if "already exists" in f"{e}":
+                raise AlreadyExistError(
+                    f"{producer} already exists"
+                )
+
             print(f"Error query : {query}")
             raise e
-
 
     def get(self, producer) -> Producer:
         cursor = self.connection.cursor()
@@ -47,13 +54,13 @@ class ProducerRepository(AbstractRepository):
         cursor.execute(query)
         results = cursor.fetchall()
         if len(results) == 0:
-            raise NotFoundError(f"Not found producer : {producer.market}:{producer.unit}")
+            raise NotFoundError(
+                f"Not found producer : {producer.market}:{producer.unit}"
+            )
 
         market, unit, heartbeat, order = results[0]
 
-        return Producer(
-            market, unit, heartbeat, order
-        )
+        return Producer(market, unit, heartbeat, order)
 
     def get_all(self) -> List[Producer]:
         cursor = self.connection.cursor()
@@ -66,8 +73,10 @@ class ProducerRepository(AbstractRepository):
         cursor.execute(query)
         results = cursor.fetchall()
 
-        return [Producer(market, unit, heartbeat, order) for market, unit, heartbeat, order in results]
-
+        return [
+            Producer(market, unit, heartbeat, order)
+            for market, unit, heartbeat, order in results
+        ]
 
     def update(self, producer: Producer):
         cursor = self.connection.cursor()
@@ -80,7 +89,9 @@ class ProducerRepository(AbstractRepository):
             "order" = '{producer.order}'
         
         WHERE market = '{producer.market}' AND unit = '{producer.unit}'
-        """.replace("'None'", "NULL")
+        """.replace(
+            "'None'", "NULL"
+        )
 
         cursor.execute(query)
         self.connection.commit()

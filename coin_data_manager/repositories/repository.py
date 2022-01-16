@@ -2,6 +2,9 @@ import abc
 from typing import List
 
 
+class AlreadyExistError(Exception):
+    pass
+
 class AbstractRepository(abc.ABC):
     @abc.abstractmethod
     def add(self, model):
