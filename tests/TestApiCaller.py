@@ -1,33 +1,35 @@
 import unittest
+from datetime import datetime, timedelta
 
-from coin_data_manager.api.api_caller import UpbitApiCaller, SimpleApiCaller
+from coin_data_manager.api.api_caller import UpbitApiCaller
 from coin_data_manager.util import CandleUnit
 
 
 class TestApiCaller(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.api_caller = SimpleApiCaller()
+        cls.api_caller = UpbitApiCaller()
 
-    def test_get_candles(self):
+    def test_get_specific_candle(self):
+        target_datetime = datetime(2021, 8, 10, 18, 36)
         market = "KRW-BTC"
-        count = 10
+        count = 1
         unit = CandleUnit.MIN_1
-        candles = self.api_caller.get_candles(market, count, unit)
+
+        candles = self.api_caller.get_candles(
+            market=market,
+            count=count,
+            unit=unit,
+            to=target_datetime + timedelta(minutes=1)
+        )
 
         self.assertEqual(count, len(candles))
 
-        for candle in candles:
-            self.assertEqual(unit, candle.unit)
+        candle = candles[0]
 
-    def test_get_ticker(self):
-        pass
-
-
-class TestUpbitApiCaller(TestApiCaller):
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.api_caller = UpbitApiCaller()
+        self.assertEqual(target_datetime, candle.datetime)
+        self.assertEqual(market, candle.market)
+        self.assertEqual(unit, candle.unit)
 
 
 if __name__ == "__main__":

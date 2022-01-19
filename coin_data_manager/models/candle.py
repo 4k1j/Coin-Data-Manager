@@ -62,7 +62,7 @@ class Candle:
 
         return Candle(
             market,
-            unit.value,
+            unit,
             candle_date_time_utc,
             open_price,
             high_price,

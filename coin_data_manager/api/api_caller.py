@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 import requests
 from coin_data_manager.models.candle import Candle
@@ -47,7 +47,7 @@ class UpbitApiCaller(ApiCaller):
         query = {"isDetails": "true"}
         return self._request(url, query)
 
-    def get_candles(self, market: str, count: int, unit: CandleUnit, to=None) -> List[Candle]:
+    def get_candles(self, market: str, count: int, unit: CandleUnit, to: Optional[datetime] = None) -> List[Candle]:
         """
         :param market: Market code ex) KRW-BTC
         :param count: Quantity you want to receive 1 ~ 200
