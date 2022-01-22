@@ -41,7 +41,7 @@ class Candle:
         return self.datetime < other.datetime
 
     def __repr__(self):
-        return f"{self.market} {self.datetime} {self.close_price}"
+        return f"{self.market} {self.unit} {self.datetime} {self.close_price}"
 
     @staticmethod
     def from_response(response: dict, unit):

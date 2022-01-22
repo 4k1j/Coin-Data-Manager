@@ -1,12 +1,7 @@
 from coin_data_manager.models.producer import Producer
-from coin_data_manager.repositories.candle import AlreadyExistError
-from coin_data_manager.repositories.repository import AbstractRepository
+from coin_data_manager.repositories.repository import AbstractRepository, NotFoundError, AlreadyExistError
 from typing import List
 import psycopg2 as pg
-
-
-class NotFoundError(Exception):
-    pass
 
 
 class ProducerRepository(AbstractRepository):

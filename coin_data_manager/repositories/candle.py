@@ -2,10 +2,11 @@ from typing import List
 import psycopg2 as pg
 
 from coin_data_manager.models.candle import Candle
+from coin_data_manager.repositories.producer import NotFoundError
 from coin_data_manager.repositories.repository import (
-    AbstractRepository,
-    AlreadyExistError,
+    AbstractRepository, AlreadyExistError
 )
+from coin_data_manager.util import CandleUnit
 
 
 class CandleRepository(AbstractRepository):
@@ -22,7 +23,7 @@ class CandleRepository(AbstractRepository):
                 INSERT INTO candle (market, unit, datetime, open_price, high_price, low_price, close_price, acc_trade_price, acc_trade_volume, create_datetime, update_datetime) 
                 VALUES (
                     '{candle.market}',
-                    '{candle.unit}',
+                    '{candle.unit.value}',
                     '{candle.datetime}',
                     {candle.open_price},
                     {candle.high_price},
@@ -47,8 +48,67 @@ class CandleRepository(AbstractRepository):
             else:
                 raise Exception(e)
 
-    def get(self, candle: Candle) -> List[Candle]:
-        pass
+    def delete(self, candle: Candle):
+        try:
+            cursor = self.connection.cursor()
+
+            query = f"""
+                DELETE FROM candle 
+                WHERE market = '{candle.market}' 
+                AND unit = '{candle.unit.value}'
+                AND datetime::timestamp(0) = '{candle.datetime}' 
+            """
+
+            cursor.execute(query)
+            self.connection.commit()
+        except Exception as e:
+            self.connection.rollback()
+            raise e
+
+    def get(self, candle: Candle) -> Candle:
+        try:
+            cursor = self.connection.cursor()
+
+            query = f"""
+                SELECT market,
+                    unit,
+                    datetime,
+                    open_price,
+                    high_price,
+                    low_price,
+                    close_price,
+                    acc_trade_price,
+                    acc_trade_volume 
+                FROM candle 
+                WHERE market = '{candle.market}' 
+                AND unit = '{candle.unit.value}'
+                AND datetime::timestamp(0) = '{candle.datetime}' 
+            """
+
+            cursor.execute(query)
+            result = cursor.fetchall()
+            if len(result) == 0:
+                raise NotFoundError(
+                    f"Not found candle : {candle.market}:{candle.unit}:{candle.datetime}"
+                )
+
+            result = result[0]
+
+            return Candle(
+                market=result[0],
+                unit=CandleUnit(result[1]),
+                _datetime=result[2],
+                open_price=result[3],
+                high_price=result[4],
+                low_price=result[5],
+                close_price=result[6],
+                acc_trade_price=result[7],
+                acc_trade_volume=result[8],
+            )
+        except Exception as e:
+            self.connection.rollback()
+            raise e
+
 
     def get_all(self) -> List[Candle]:
         pass
