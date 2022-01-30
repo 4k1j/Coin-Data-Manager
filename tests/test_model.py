@@ -2,10 +2,11 @@ import unittest
 from datetime import datetime
 
 from coin_data_manager.models.candle import Candle
+from coin_data_manager.models.producer import Producer
 from coin_data_manager.util import CandleUnit
 
 
-class TestCandle(unittest.TestCase):
+class TestCandleModel(unittest.TestCase):
     def test_candle_equals(self):
         price = 10000.0
         acc_trade_volume = 1440
@@ -103,6 +104,20 @@ class TestCandle(unittest.TestCase):
         self.assertTrue(candle_a < candle_b)
         self.assertFalse(candle_b < candle_a)
         self.assertEqual([candle_a, candle_b], sorted_candles)
+
+
+class TestProducer(unittest.TestCase):
+    def test_producer_equals(self):
+        producer_a = Producer("KRW-BTC", CandleUnit.MIN_1)
+        producer_b = Producer("KRW-BTC", CandleUnit.MIN_1)
+        producer_c = Producer("KRW-BTC", CandleUnit.MIN_10)
+        producer_d = Producer("KRW-ETH", CandleUnit.MIN_1)
+        producer_e = Producer("KRW-DOGE", CandleUnit.MIN_10)
+
+        self.assertEqual(producer_a, producer_b)
+        self.assertNotEquals(producer_a, producer_c)
+        self.assertNotEquals(producer_a, producer_d)
+        self.assertNotEquals(producer_a, producer_e)
 
 
 if __name__ == "__main__":

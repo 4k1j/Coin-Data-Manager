@@ -2,16 +2,18 @@ import unittest
 from datetime import datetime
 
 from coin_data_manager.models.candle import Candle
+from coin_data_manager.models.producer import Producer
 from coin_data_manager.repositories.candle import CandleRepository
-from coin_data_manager.repositories.repository import NotFoundError
+from coin_data_manager.repositories.producer import ProducerRepository
+from coin_data_manager.repositories.repository import NotFoundError, AlreadyExistError
 from coin_data_manager.util import CandleUnit
 from config.config import CONFIG
 
 
-class TestRepository(unittest.TestCase):
+class TestCandleRepository(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        database_config = CONFIG["database"]
+        database_config = CONFIG["database_dev"]
         candle_repository = CandleRepository(**database_config)
 
         test_candles = [
@@ -108,7 +110,7 @@ class TestRepository(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        database_config = CONFIG["database"]
+        database_config = CONFIG["database_dev"]
         cls.candle_repository = CandleRepository(**database_config)
 
         candle_repository = CandleRepository(**database_config)
@@ -146,10 +148,86 @@ class TestRepository(unittest.TestCase):
                 close_price=10030.2,
                 acc_trade_price=215123152.2,
                 acc_trade_volume=125125,
-            )
+            ),
         ]
 
         for test_candle in test_candles:
             candle_repository.delete(test_candle)
 
-        cls.candle_repository = candle_repository
+
+class TestProducerRepository(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        database_config = CONFIG["database_dev"]
+        producer_repository = ProducerRepository(**database_config)
+
+        test_producers = [
+            Producer("KRW-BTC", CandleUnit.MIN_1),
+            Producer("KRW-ETH", CandleUnit.MIN_10),
+        ]
+
+        for test_producer in test_producers:
+            producer_repository.add(test_producer)
+
+        cls.producer_repository = producer_repository
+
+    def test_get_producer(self):
+        target_producer = Producer("KRW-BTC", CandleUnit.MIN_1)
+
+        producer = self.producer_repository.get(target_producer)
+
+        self.assertEqual(target_producer, producer)
+
+    def test_add_producer(self):
+        test_producer = Producer("KRW-DOGE", CandleUnit.MIN_1)
+
+        self.producer_repository.add(test_producer)
+
+        producer = self.producer_repository.get(test_producer)
+
+        self.assertEqual(test_producer, producer)
+
+        self.assertRaises(
+            AlreadyExistError, self.producer_repository.add, test_producer
+        )
+
+    def test_delete_producer(self):
+        target_producer = Producer("KRW-ETH", CandleUnit.MIN_10)
+
+        self.producer_repository.delete(target_producer)
+
+        self.assertRaises(NotFoundError, self.producer_repository.get, target_producer)
+
+    def test_update_producer(self):
+        target_producer = Producer("KRW-BTC", CandleUnit.MIN_1)
+        order = "SLEEP 10"
+
+        producer = self.producer_repository.get(target_producer)
+
+        self.assertEqual(None, producer.order)
+
+        target_producer.order = order
+
+        self.producer_repository.update(target_producer)
+        producer = self.producer_repository.get(target_producer)
+
+        self.assertEqual(target_producer, producer)
+        self.assertEqual(target_producer.order, producer.order)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        database_config = CONFIG["database_dev"]
+        producer_repository = ProducerRepository(**database_config)
+
+        test_producers = [
+            Producer("KRW-BTC", CandleUnit.MIN_1),
+            Producer("KRW-ETH", CandleUnit.MIN_10),
+            Producer("KRW-DOGE", CandleUnit.MIN_1),
+        ]
+
+        for test_producer in test_producers:
+            producer_repository.delete(test_producer)
+
+
+if __name__ == "__main__":
+    unittest.main()

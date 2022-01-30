@@ -3,12 +3,31 @@ from coin_data_manager.repositories.repository import AbstractRepository, NotFou
 from typing import List
 import psycopg2 as pg
 
+from coin_data_manager.util import CandleUnit
+
 
 class ProducerRepository(AbstractRepository):
     def __init__(self, database, host, port, user, password):
         self.connection = pg.connect(
             database=database, host=host, port=port, user=user, password=password,
         )
+
+    def delete(self, producer: Producer):
+        try:
+            cursor = self.connection.cursor()
+
+            query = f"""
+                DELETE FROM producer 
+                WHERE market = '{producer.market}' 
+                AND unit = '{producer.unit.value}'
+            """
+            print("delete query ", query)
+
+            cursor.execute(query)
+            self.connection.commit()
+        except Exception as e:
+            self.connection.rollback()
+            raise e
 
     def add(self, producer: Producer):
         cursor = self.connection.cursor()
@@ -29,6 +48,8 @@ class ProducerRepository(AbstractRepository):
             cursor.execute(query)
             self.connection.commit()
         except Exception as e:
+            self.connection.rollback()
+
             if "already exists" in f"{e}":
                 raise AlreadyExistError(
                     f"{producer} already exists"
@@ -43,19 +64,20 @@ class ProducerRepository(AbstractRepository):
         query = f"""
         SELECT market, unit, heartbeat, "order"
         FROM producer
-        WHERE market = '{producer.market}' and unit = '{producer.unit}'
+        WHERE market = '{producer.market}' and unit = '{producer.unit.value}'
         """
 
         cursor.execute(query)
         results = cursor.fetchall()
         if len(results) == 0:
+            self.connection.rollback()
             raise NotFoundError(
                 f"Not found producer : {producer.market}:{producer.unit}"
             )
 
         market, unit, heartbeat, order = results[0]
 
-        return Producer(market, unit, heartbeat, order)
+        return Producer(market, CandleUnit(unit), heartbeat, order)
 
     def get_all(self) -> List[Producer]:
         cursor = self.connection.cursor()
@@ -69,7 +91,7 @@ class ProducerRepository(AbstractRepository):
         results = cursor.fetchall()
 
         return [
-            Producer(market, unit, heartbeat, order)
+            Producer(market, CandleUnit(unit), heartbeat, order)
             for market, unit, heartbeat, order in results
         ]
 
@@ -79,11 +101,11 @@ class ProducerRepository(AbstractRepository):
         query = f"""
         UPDATE producer
         SET market = '{producer.market}',
-            unit = '{producer.unit}',
+            unit = '{producer.unit.value}',
             heartbeat = '{producer.heartbeat}',
             "order" = '{producer.order}'
         
-        WHERE market = '{producer.market}' AND unit = '{producer.unit}'
+        WHERE market = '{producer.market}' AND unit = '{producer.unit.value}'
         """.replace(
             "'None'", "NULL"
         )
