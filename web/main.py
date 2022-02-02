@@ -7,7 +7,7 @@ from coin_data_manager.repositories.repository import AlreadyExistError
 from coin_data_manager.util import CandleUnit
 from config.config import CONFIG
 
-database_config = CONFIG["database"]
+database_config = CONFIG["database_dev"]
 app = FastAPI()
 
 
@@ -32,11 +32,23 @@ def create_producer(producer: ProducerData):
     producer_repository = ProducerRepository(**database_config)
     try:
         producer_repository.add(
-            Producer(
-                market=producer.market,
-                unit=CandleUnit(producer.unit)
-            )
+            Producer(market=producer.market, unit=CandleUnit(producer.unit))
         )
     except AlreadyExistError:
         return "Already exist"
 
+
+@app.delete("/producer/")
+def delete_producer(producer: ProducerData):
+    producer_repository = ProducerRepository(**database_config)
+    producer_repository.delete(
+        Producer(market=producer.market, unit=CandleUnit(producer.unit))
+    )
+
+
+@app.put("/producer/")
+def update_producer(producer: ProducerData):
+    producer_repository = ProducerRepository(**database_config)
+    producer_repository.update(
+        Producer(market=producer.market, unit=CandleUnit(producer.unit))
+    )

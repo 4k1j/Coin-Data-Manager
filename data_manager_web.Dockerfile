@@ -12,6 +12,8 @@ COPY web .
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 
+
 EXPOSE 8000
 
+RUN python -m unittest test
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]
