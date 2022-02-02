@@ -30,3 +30,5 @@ class Producer:
 class ProducerData(BaseModel):
     market: str
     unit: str
+    heartbeat: Optional[datetime]
+    order: Optional[str]

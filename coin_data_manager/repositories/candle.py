@@ -1,10 +1,12 @@
-from typing import List
+from datetime import datetime
+from typing import List, Optional
 import psycopg2 as pg
 
 from coin_data_manager.models.candle import Candle
 from coin_data_manager.repositories.producer import NotFoundError
 from coin_data_manager.repositories.repository import (
-    AbstractRepository, AlreadyExistError
+    AbstractRepository,
+    AlreadyExistError,
 )
 from coin_data_manager.util import CandleUnit
 
@@ -109,9 +111,61 @@ class CandleRepository(AbstractRepository):
             self.connection.rollback()
             raise e
 
+    def get_all(
+        self,
+        market,
+        unit: CandleUnit,
+        from_datetime: Optional[datetime],
+        to_datetime: Optional[datetime],
+    ) -> List[Candle]:
+        try:
+            cursor = self.connection.cursor()
 
-    def get_all(self) -> List[Candle]:
-        pass
+            query = f"""
+                SELECT market,
+                    unit,
+                    datetime,
+                    open_price,
+                    high_price,
+                    low_price,
+                    close_price,
+                    acc_trade_price,
+                    acc_trade_volume 
+                FROM candle 
+                WHERE market = '{market}' 
+                AND unit = '{unit.value}'
+            """
+
+            if from_datetime is not None:
+                query += f"AND datetime::timestamp(0) >= '{from_datetime}' "
+
+            if to_datetime is not None:
+                query += f"AND datetime::timestamp(0) <= '{to_datetime}' "
+
+            print(query)
+            cursor.execute(query)
+            results = cursor.fetchall()
+            if len(results) == 0:
+                raise NotFoundError(f"Not found target candles")
+
+            return [
+                Candle(
+                    market=result[0],
+                    unit=CandleUnit(result[1]),
+                    _datetime=result[2],
+                    open_price=result[3],
+                    high_price=result[4],
+                    low_price=result[5],
+                    close_price=result[6],
+                    acc_trade_price=result[7],
+                    acc_trade_volume=result[8],
+                )
+                for result in results
+            ]
+
+        except Exception as e:
+            self.connection.rollback()
+            raise e
 
     def update(self, candle: Candle):
         pass

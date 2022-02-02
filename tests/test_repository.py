@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from coin_data_manager.models.candle import Candle
 from coin_data_manager.models.producer import Producer
@@ -41,6 +41,22 @@ class TestCandleRepository(unittest.TestCase):
             ),
         ]
 
+        sequential_candles = [
+            Candle(
+                market="KRW-BTC",
+                unit=CandleUnit.MIN_10,
+                _datetime=datetime(1996, 3, 4, 12, 30) + timedelta(minutes=i),
+                open_price=1000 + i,
+                high_price=1000 + i,
+                low_price=1000 + i,
+                close_price=1000 + i,
+                acc_trade_price=1000 + i,
+                acc_trade_volume=1000 + i,
+            )
+            for i in range(10)
+        ]
+
+        test_candles.extend(sequential_candles)
         for test_candle in test_candles:
             candle_repository.add(test_candle)
 
@@ -108,6 +124,48 @@ class TestCandleRepository(unittest.TestCase):
 
         self.assertEqual(test_candle, candle)
 
+    def test_get_candles(self):
+        market = "KRW-BTC"
+        unit = CandleUnit.MIN_10
+        from_datetime = datetime(1996, 3, 4, 12, 30)
+        to_datetime = datetime(1996, 3, 4, 12, 39)
+
+        candles = self.candle_repository.get_all(market, unit, from_datetime, to_datetime)
+
+        self.assertEqual(10, len(candles))
+
+        expect_candle = Candle(
+            market=market,
+            unit=unit,
+            _datetime=from_datetime,
+            open_price=1000.0,
+            high_price=1000.0,
+            low_price=1000.0,
+            close_price=1000.0,
+            acc_trade_price=1000.0,
+            acc_trade_volume=1000.0,
+        )
+
+        test_count = 0
+        candles.sort()
+        for candle in candles:
+            print(candle)
+            self.assertEqual(expect_candle, candle)
+            expect_candle.datetime += timedelta(minutes=1)
+
+            self.assertEqual(expect_candle.open_price + test_count, candle.open_price)
+            self.assertEqual(expect_candle.close_price + test_count, candle.close_price)
+            self.assertEqual(expect_candle.low_price + test_count, candle.low_price)
+            self.assertEqual(expect_candle.high_price + test_count, candle.high_price)
+            self.assertEqual(
+                expect_candle.acc_trade_price + test_count, candle.acc_trade_price
+            )
+            self.assertEqual(
+                expect_candle.acc_trade_volume + test_count, candle.acc_trade_volume
+            )
+
+            test_count += 1
+
     @classmethod
     def tearDownClass(cls) -> None:
         database_config = CONFIG["database_dev"]
@@ -150,6 +208,23 @@ class TestCandleRepository(unittest.TestCase):
                 acc_trade_volume=125125,
             ),
         ]
+
+        sequential_candles = [
+            Candle(
+                market="KRW-BTC",
+                unit=CandleUnit.MIN_10,
+                _datetime=datetime(1996, 3, 4, 12, 30) + timedelta(minutes=i),
+                open_price=1000 + i,
+                high_price=1000 + i,
+                low_price=1000 + i,
+                close_price=1000 + i,
+                acc_trade_price=1000 + i,
+                acc_trade_volume=1000 + i,
+            )
+            for i in range(10)
+        ]
+
+        test_candles.extend(sequential_candles)
 
         for test_candle in test_candles:
             candle_repository.delete(test_candle)

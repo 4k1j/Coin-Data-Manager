@@ -20,10 +20,6 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_all(self) -> List:
-        raise NotImplementedError
-
-    @abc.abstractmethod
     def update(self, model):
         raise NotImplementedError
 
