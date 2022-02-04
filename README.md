@@ -6,6 +6,11 @@
 ## Upbit
 https://docs.upbit.com/docs/create-authorization-request
 
+# Kafka
+```shell
+cd kafka
+docker-compose up -d
+```
 
 # Producer
 ```shell
